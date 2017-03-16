@@ -1,8 +1,23 @@
 package com.java.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 
 public class Checkers extends JFrame
@@ -10,6 +25,9 @@ public class Checkers extends JFrame
    public Checkers(String title)
    {
       super(title);
+      
+      setIconImage(new ImageIcon("img/icone.png").getImage());
+      setResizable(false);
       setDefaultCloseOperation(EXIT_ON_CLOSE);
 
       Board board = new Board();
@@ -26,5 +44,9 @@ public class Checkers extends JFrame
       setContentPane(board);
       pack();
       setVisible(true);
+	  setLocationRelativeTo(null);
+
    }
+   
+
 }
