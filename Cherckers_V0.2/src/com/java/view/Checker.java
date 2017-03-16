@@ -19,16 +19,12 @@ public final class Checker
       int x = cx - DIMENSION / 2;
       int y = cy - DIMENSION / 2;
 
-      // Set checker color.
-
       g.setColor(checkerType == CheckerType.BLACK_REGULAR ? Color.DARK_GRAY : 
                  Color.PINK);
-
-      // Paint checker.
-
-      g.fillOval(x, y, DIMENSION, DIMENSION);
+      
+      g.fillRoundRect(x, y, DIMENSION, DIMENSION, 45, 45);
       g.setColor(Color.WHITE);
-      g.drawOval(x, y, DIMENSION, DIMENSION);
+      g.drawRoundRect(x, y, DIMENSION, DIMENSION, 45, 45);
    }
 
    public static boolean contains(int x, int y, int cx, int cy)
@@ -36,13 +32,6 @@ public final class Checker
       return (cx - x) * (cx - x) + (cy - y) * (cy - y) < DIMENSION / 2 * 
              DIMENSION / 2;
    }
-
-   // The dimension is returned via a method rather than by accessing the
-   // DIMENSION constant directly to avoid brittle code. If the constant was
-   // accessed directly and I changed its value in Checker and recompiled only
-   // this class, the old DIMENSION value would be accessed from external 
-   // classes whereas the new DIMENSION value would be used in Checker. The
-   // result would be erratic code.
    
    public static int getDimension()
    {
