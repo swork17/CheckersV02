@@ -18,7 +18,7 @@ public final class Checker
    {
       int x = cx - DIMENSION / 2;
       int y = cy - DIMENSION / 2;
-
+    
       g.setColor(checkerType == CheckerType.BLACK_REGULAR ? Color.DARK_GRAY : 
                  Color.PINK);
       
@@ -26,7 +26,7 @@ public final class Checker
       g.setColor(Color.WHITE);
       g.drawRoundRect(x, y, DIMENSION, DIMENSION, 45, 45);
    }
-
+   
    public static boolean contains(int x, int y, int cx, int cy)
    {
       return (cx - x) * (cx - x) + (cy - y) * (cy - y) < DIMENSION / 2 * 

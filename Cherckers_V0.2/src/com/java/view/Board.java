@@ -68,14 +68,35 @@ public class Board extends JComponent
 				posCheck.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + 
 						SQUAREDIM / 2;
 				
-				for (PosCheck posCheck: posChecks)
-					if (posCheck != Board.this.posCheck && 
-					posCheck.cx == Board.this.posCheck.cx &&
-					posCheck.cy == Board.this.posCheck.cy)
-					{
-						Board.this.posCheck.cx = oldcx;
-						Board.this.posCheck.cy = oldcy;
+				
+				// Vérification de l'emplacement du pion 
+				boolean isValid = true;
+				
+				// Non valide si le pion sort du cadre
+				if(posCheck.cx < 0 || posCheck.cy < 0
+			       || posCheck.cy >= dimPrefSize.getHeight()
+			       || posCheck.cx >= dimPrefSize.getWidth())
+					isValid = false;
+								
+				if(isValid == true)
+					for (PosCheck posCheck: posChecks)
+					{				
+						if (posCheck    != Board.this.posCheck && 
+							posCheck.cx == Board.this.posCheck.cx &&
+							posCheck.cy == Board.this.posCheck.cy)
+						{
+							isValid = false;
+							break;
+						}
 					}
+					
+				// Repositionnement si la position n'est pas valide
+				if(isValid == false)
+				{
+					Board.this.posCheck.cx = oldcx;
+					Board.this.posCheck.cy = oldcy;
+				}
+					
 				posCheck = null;
 				repaint();
 			}
@@ -109,8 +130,8 @@ public class Board extends JComponent
 		posCheck.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
 		for (PosCheck _posCheck: posChecks)
 			if (posCheck.cx == _posCheck.cx && posCheck.cy == _posCheck.cy)
-				throw new AlreadyOccupiedException("square at (" + row + "," +
-						col + ") is occupied");
+				throw new AlreadyOccupiedException("L'emplacement (" + row + "," +
+						col + ") est occupé");
 		posChecks.add(posCheck);
 	}
 

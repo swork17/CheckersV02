@@ -21,15 +21,32 @@ import javax.swing.KeyStroke;
 
 public class Checkers extends JFrame
 {
+	private Board board;
+	
    public Checkers(String title)
    {
-      super(title);
+      super(title);	 
       
       setIconImage(new ImageIcon("img/icone.png").getImage());
       setResizable(false);
       setDefaultCloseOperation(EXIT_ON_CLOSE);
+     
+      init_menu();
+      init_board();
+      init_score();
+    	  
+      pack();
+      setVisible(true);
+	  setLocationRelativeTo(null);
 
-      Board board = new Board();
+   }
+   
+   private void init_board(){
+	   
+	  if(board != null)
+		  remove(board);
+	  
+      board = new Board();
       for (int i=1; i < 11; i++) {
     	  for (int j=1; j < 11; j++) {
     		  if(((i+j) % 2)==0) 
@@ -41,14 +58,8 @@ public class Checkers extends JFrame
     	  }
       }
       
-      init_menu();
       add(board);
-      init_score();
-    	  
       pack();
-      setVisible(true);
-	  setLocationRelativeTo(null);
-
    }
    
 	private void init_menu() {
@@ -86,6 +97,12 @@ public class Checkers extends JFrame
 		
 		// Option "Nouvelle partie"
 		new_game.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+		new_game.addActionListener(new ActionListener(){
+	    	public void actionPerformed(ActionEvent e){
+	    		init_board();
+	    	}
+	    });
+
 		
 		// Option "Quitter"
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_MASK));
@@ -100,7 +117,7 @@ public class Checkers extends JFrame
 		help.addActionListener(new ActionListener(){
 	    	public void actionPerformed(ActionEvent e){
     		JOptionPane.showMessageDialog(null, "Createurs : Kevin BOUCHER - Fabien DIDIER\nVersion : 0.1",
-						    		            "Information", JOptionPane.NO_OPTION);;
+						    		            "Information", JOptionPane.NO_OPTION);
 	    	}
 	    });
 
