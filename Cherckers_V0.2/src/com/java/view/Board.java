@@ -15,8 +15,10 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-public class Board extends JComponent
-{
+@SuppressWarnings("serial")
+
+public class Board extends JComponent {
+	
 	private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
 	private final int BOARDDIM = 10 * SQUAREDIM;
 	private Dimension dimPrefSize;
@@ -26,16 +28,14 @@ public class Board extends JComponent
 	private int oldcx, oldcy;
 	private List<PosCheck> posChecks;
 
-	public Board()
-	{
+	public Board() {
 		posChecks = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 
 		addMouseListener(new MouseAdapter()
 		{
 			@Override
-			public void mousePressed(MouseEvent me)
-			{
+			public void mousePressed(MouseEvent me) {
 				int x = me.getX();
 				int y = me.getY();
 
@@ -54,8 +54,7 @@ public class Board extends JComponent
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent me)
-			{
+			public void mouseReleased(MouseEvent me) {
 				if (inDrag)
 					inDrag = false;
 				else
@@ -69,7 +68,7 @@ public class Board extends JComponent
 						SQUAREDIM / 2;
 				
 				
-				// Vérification de l'emplacement du pion 
+				// Verification de l'emplacement du pion 
 				boolean isValid = true;
 				
 				// Non valide si le pion sort du cadre
@@ -77,11 +76,26 @@ public class Board extends JComponent
 			       || posCheck.cy >= dimPrefSize.getHeight()
 			       || posCheck.cx >= dimPrefSize.getWidth())
 					isValid = false;
-								
+				
+				System.out.println("Y :" + posCheck.cy);
+				System.out.println("X :" + posCheck.cx);
+				
+				int column = ((posCheck.cx - (SQUAREDIM /2)) / SQUAREDIM) + 1;
+				int line = ((posCheck.cy - (SQUAREDIM /2)) / SQUAREDIM) + 1;
+				
+				if (line % 2 == 1) {
+					if (column % 2 == 0)
+						isValid = false;
+				} else {
+					if (column % 2 == 1)
+						isValid = false;
+				}
+						
+		
 				if(isValid == true)
 					for (PosCheck posCheck: posChecks)
 					{				
-						if (posCheck    != Board.this.posCheck && 
+						if (posCheck != Board.this.posCheck && 
 							posCheck.cx == Board.this.posCheck.cx &&
 							posCheck.cy == Board.this.posCheck.cy)
 						{
@@ -102,13 +116,10 @@ public class Board extends JComponent
 			}
 		});
 
-		addMouseMotionListener(new MouseMotionAdapter()
-		{
+		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
-			public void mouseDragged(MouseEvent me)
-			{
-				if (inDrag)
-				{
+			public void mouseDragged(MouseEvent me) {
+				if (inDrag) {
 					posCheck.cx = me.getX() - deltax;
 					posCheck.cy = me.getY() - deltay;
 					repaint();
@@ -118,8 +129,7 @@ public class Board extends JComponent
 
 	}
 
-	public void add(Checker checker, int row, int col)
-	{
+	public void add(Checker checker, int row, int col) {
 		if (row < 1 || row > 10)
 			throw new IllegalArgumentException("row out of range: " + row);
 		if (col < 1 || col > 10)
@@ -131,19 +141,17 @@ public class Board extends JComponent
 		for (PosCheck _posCheck: posChecks)
 			if (posCheck.cx == _posCheck.cx && posCheck.cy == _posCheck.cy)
 				throw new AlreadyOccupiedException("L'emplacement (" + row + "," +
-						col + ") est occupé");
+						col + ") est occupï¿½");
 		posChecks.add(posCheck);
 	}
 
 	@Override
-	public Dimension getPreferredSize()
-	{
+	public Dimension getPreferredSize() {
 		return dimPrefSize;
 	}
 
 	@Override
-	protected void paintComponent(Graphics g)
-	{
+	protected void paintComponent(Graphics g) {
 		paintCheckerBoard(g);
 		for (PosCheck posCheck: posChecks)
 			if (posCheck != Board.this.posCheck)
@@ -153,13 +161,11 @@ public class Board extends JComponent
 			posCheck.checker.draw(g, posCheck.cx, posCheck.cy);
 	}
 
-	private void paintCheckerBoard(Graphics g)
-	{
+	private void paintCheckerBoard(Graphics g) {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
-		for (int row = 0; row < 10; row++)
-		{
+		for (int row = 0; row < 10; row++) {
 			g.setColor(((row & 1) != 0) ? Color.WHITE : Color.LIGHT_GRAY);
 			for (int col = 0; col < 10; col++)
 			{
@@ -169,10 +175,7 @@ public class Board extends JComponent
 		}
 	}
 
-	// positioned checker helper class
-
-	private class PosCheck
-	{
+	private class PosCheck {
 		public Checker checker;
 		public int cx;
 		public int cy;
