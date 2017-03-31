@@ -77,11 +77,17 @@ public class Board extends JComponent {
 			       || posCheck.cx >= dimPrefSize.getWidth())
 					isValid = false;
 				
-				System.out.println("Y :" + posCheck.cy);
-				System.out.println("X :" + posCheck.cx);
-				
 				int column = ((posCheck.cx - (SQUAREDIM /2)) / SQUAREDIM) + 1;
 				int line = ((posCheck.cy - (SQUAREDIM /2)) / SQUAREDIM) + 1;
+				
+				int old_column = ((oldcx - (SQUAREDIM /2)) / SQUAREDIM) + 1;
+				int old_line = ((oldcy - (SQUAREDIM /2)) / SQUAREDIM) + 1;
+						
+				
+				//System.out.println("Y :" + line + " OLD : " + old_line);
+				//System.out.println("X :" + column + " OLD : " + old_column);
+				
+				
 				
 				if (line % 2 == 1) {
 					if (column % 2 == 0)
@@ -95,13 +101,21 @@ public class Board extends JComponent {
 				if(isValid == true)
 					for (PosCheck posCheck: posChecks)
 					{				
+						System.out.println("NEW" + line + " : OLD :" + (old_line + 1));
+						if (line > (old_line+1) 
+								|| column > (old_column+1) 
+								|| line < ( old_line - 1) 
+								|| column < (old_column - 1)) {
+							isValid = false; 
+							break;
+						}
 						if (posCheck != Board.this.posCheck && 
 							posCheck.cx == Board.this.posCheck.cx &&
 							posCheck.cy == Board.this.posCheck.cy)
 						{
 							isValid = false;
 							break;
-						}
+							}
 					}
 					
 				// Repositionnement si la position n'est pas valide
