@@ -91,6 +91,8 @@ public class Board extends JComponent {
 						isValid = false;
 				}
 
+				int posChecker = 0;
+				
 				if(isValid == true)
 					for (PosCheck posCheck: posChecks)
 					{				
@@ -114,7 +116,9 @@ public class Board extends JComponent {
 									break;
 								}
 								else {
-									System.out.println("Il peut manger le noir");
+									posChecks.remove(posChecker);
+									revalidate();
+									repaint();
 									isValid = true;
 									break;
 								}
@@ -126,7 +130,9 @@ public class Board extends JComponent {
 									break;
 								}								
 								else {
-									System.out.println("Il peut manger le blanc");
+									posChecks.remove(posChecker);
+									revalidate();
+									repaint();
 									isValid = true;
 									break;
 								}
@@ -134,6 +140,7 @@ public class Board extends JComponent {
 							//isValid = false;
 							//break;
 						}
+						posChecker = posChecker + 1;
 					}
 
 				// Repositionnement si la position n'est pas valide

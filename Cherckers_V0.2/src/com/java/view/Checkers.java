@@ -127,9 +127,12 @@ public class Checkers extends JFrame
 	private void init_score() {
 
 		JPanel score = new JPanel();
-		score.add(new JLabel("Score : 0"));
+		score.setLayout(new BorderLayout());
+		
+		score.add(new JLabel("Score : "), BorderLayout.WEST);
+		score.add(new JLabel("Ton tour"), BorderLayout.EAST);
+
 		score.setBorder(BorderFactory.createLineBorder(Color.black));
 		add(score, BorderLayout.SOUTH);
 	}  
-
 }
