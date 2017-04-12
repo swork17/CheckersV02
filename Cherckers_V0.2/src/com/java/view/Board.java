@@ -18,7 +18,7 @@ import javax.swing.JComponent;
 @SuppressWarnings("serial")
 
 public class Board extends JComponent {
-	
+
 	private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
 	private final int BOARDDIM = 10 * SQUAREDIM;
 	private Dimension dimPrefSize;
@@ -66,29 +66,23 @@ public class Board extends JComponent {
 						SQUAREDIM / 2;
 				posCheck.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + 
 						SQUAREDIM / 2;
-				
-				
+
+
 				// Verification de l'emplacement du pion 
 				boolean isValid = true;
-				
+
 				// Non valide si le pion sort du cadre
 				if(posCheck.cx < 0 || posCheck.cy < 0
-			       || posCheck.cy >= dimPrefSize.getHeight()
-			       || posCheck.cx >= dimPrefSize.getWidth())
+						|| posCheck.cy >= dimPrefSize.getHeight()
+						|| posCheck.cx >= dimPrefSize.getWidth())
 					isValid = false;
-				
+
 				int column = ((posCheck.cx - (SQUAREDIM /2)) / SQUAREDIM) + 1;
 				int line = ((posCheck.cy - (SQUAREDIM /2)) / SQUAREDIM) + 1;
-				
+
 				int old_column = ((oldcx - (SQUAREDIM /2)) / SQUAREDIM) + 1;
 				int old_line = ((oldcy - (SQUAREDIM /2)) / SQUAREDIM) + 1;
-						
-				
-				//System.out.println("Y :" + line + " OLD : " + old_line);
-				//System.out.println("X :" + column + " OLD : " + old_column);
-				
-				
-				
+
 				if (line % 2 == 1) {
 					if (column % 2 == 0)
 						isValid = false;
@@ -96,35 +90,59 @@ public class Board extends JComponent {
 					if (column % 2 == 1)
 						isValid = false;
 				}
-						
-		
+
 				if(isValid == true)
 					for (PosCheck posCheck: posChecks)
 					{				
-						System.out.println("NEW" + line + " : OLD :" + (old_line + 1));
 						if (line > (old_line+1) 
-								|| column > (old_column+1) 
+								|| column > (old_column + 1) 
 								|| line < ( old_line - 1) 
 								|| column < (old_column - 1)) {
 							isValid = false; 
 							break;
 						}
 						if (posCheck != Board.this.posCheck && 
-							posCheck.cx == Board.this.posCheck.cx &&
-							posCheck.cy == Board.this.posCheck.cy)
+								posCheck.cx == Board.this.posCheck.cx &&
+								posCheck.cy == Board.this.posCheck.cy)
 						{
-							isValid = false;
-							break;
+							//ICI MANGE PION 
+							System.out.println("Ici un pion est pose");
+							if (posCheck.checker.getType() == CheckerType.BLACK_REGULAR) {
+								if (Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR) {
+									System.out.println("Tu peux pas manger ton camp idiot ..."); 
+									isValid = false;
+									break;
+								}
+								else {
+									System.out.println("Il peut manger le noir");
+									isValid = true;
+									break;
+								}
 							}
+							else if (posCheck.checker.getType() == CheckerType.RED_REGULAR) {
+								if (Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR) {
+									System.out.println("Tu peux pas manger ton camp idiot ...");
+									isValid = false;
+									break;
+								}								
+								else {
+									System.out.println("Il peut manger le blanc");
+									isValid = true;
+									break;
+								}
+							}
+							//isValid = false;
+							//break;
+						}
 					}
-					
+
 				// Repositionnement si la position n'est pas valide
 				if(isValid == false)
 				{
 					Board.this.posCheck.cx = oldcx;
 					Board.this.posCheck.cy = oldcy;
 				}
-					
+
 				posCheck = null;
 				repaint();
 			}
@@ -155,7 +173,7 @@ public class Board extends JComponent {
 		for (PosCheck _posCheck: posChecks)
 			if (posCheck.cx == _posCheck.cx && posCheck.cy == _posCheck.cy)
 				throw new AlreadyOccupiedException("L'emplacement (" + row + "," +
-						col + ") est occup�");
+						col + ") est occupe");
 		posChecks.add(posCheck);
 	}
 

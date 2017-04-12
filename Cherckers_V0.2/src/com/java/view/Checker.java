@@ -37,4 +37,13 @@ public final class Checker
    {
       return DIMENSION;
    }
+   
+   public CheckerType getType() {
+	   return this.checkerType;
+   }
+   
+   
+   public Checker getChecker() {
+	   return this;
+   }
 }
