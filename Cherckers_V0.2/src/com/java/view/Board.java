@@ -120,7 +120,7 @@ public class Board extends JComponent {
 								int newx = Board.this.posCheck.cx + (Board.this.posCheck.cx - oldcx);
 								int newy = Board.this.posCheck.cy + (Board.this.posCheck.cy - oldcy);
 
-								if(isOccupe(newx, newy) == true){
+								if(posLibre(newx, newy) == false){
 									System.out.println("Impossible de manger le pion, l'emplacement est occupe !"); 
 									isValid = false;
 									break;
@@ -180,10 +180,16 @@ public class Board extends JComponent {
 		posChecks.add(posCheck);
 	}
 	
-	// Permet de savoir si l'emplacement est occupe
-	private boolean isOccupe(int posx, int posy){
+	// Permet de savoir si l'emplacement est libre
+	private boolean posLibre(int posx, int posy){
 		
-		boolean isOccupe = false;
+		boolean isLibre = true;
+		
+		// Retourne false si le pion sort du cadre
+		if(posx < 0 || posy < 0
+				|| posx >= dimPrefSize.getHeight()
+				|| posy >= dimPrefSize.getWidth())
+			return false;
 		
 		for (PosCheck posCheck: posChecks)
 		{				
@@ -191,12 +197,12 @@ public class Board extends JComponent {
 					posCheck.cx == posx &&
 					posCheck.cy == posy)
 			{
-				isOccupe = true;
+				isLibre = false;
 				break;
 			}
 		}
 			
-		return isOccupe;
+		return isLibre;
 	}
 
 	@Override

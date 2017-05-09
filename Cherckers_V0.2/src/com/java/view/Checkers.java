@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -127,11 +128,12 @@ public class Checkers extends JFrame
 	private void init_score() {
 
 		JPanel score = new JPanel();
-		score.setLayout(new BorderLayout());
+		JLabel lbscore = new JLabel("Score : 20 - 20");
+		JButton terminer = new JButton("Terminer son tour");
 		
-		score.add(new JLabel("Score : "), BorderLayout.WEST);
-		score.add(new JLabel("Ton tour"), BorderLayout.EAST);
-
+		score.setLayout(new BorderLayout());
+		score.add(lbscore, BorderLayout.WEST);
+		score.add(terminer, BorderLayout.EAST);
 		score.setBorder(BorderFactory.createLineBorder(Color.black));
 		add(score, BorderLayout.SOUTH);
 	}  
