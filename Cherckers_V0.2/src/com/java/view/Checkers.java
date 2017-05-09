@@ -116,7 +116,7 @@ public class Checkers extends JFrame
 		// Option "?"
 		help.addActionListener(new ActionListener(){
 	    	public void actionPerformed(ActionEvent e){
-    		JOptionPane.showMessageDialog(null, "Createurs : Kevin BOUCHER - Fabien DIDIER\nVersion : 0.1",
+    		JOptionPane.showMessageDialog(null, "Createurs : Kevin BOUCHER - Fabien DIDIER\nVersion : 0.2",
 						    		            "Information", JOptionPane.NO_OPTION);
 	    	}
 	    });

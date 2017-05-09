@@ -103,42 +103,38 @@ public class Board extends JComponent {
 							isValid = false; 
 							break;
 						}
+						
+						// Possibilite de manger le pion
 						if (posCheck != Board.this.posCheck && 
 								posCheck.cx == Board.this.posCheck.cx &&
 								posCheck.cy == Board.this.posCheck.cy)
 						{
-							//ICI MANGE PION 
-							System.out.println("Ici un pion est pose");
-							if (posCheck.checker.getType() == CheckerType.BLACK_REGULAR) {
-								if (Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR) {
-									System.out.println("Tu peux pas manger ton camp idiot ..."); 
+							if(posCheck.checker.getType() == Board.this.posCheck.checker.getType()){
+								System.out.println("Impossible de manger ses propres pions !"); 
+								isValid = false;
+								break;
+							}
+							else{
+								
+								// Calcul de la nouvelle position du pion
+								int newx = Board.this.posCheck.cx + (Board.this.posCheck.cx - oldcx);
+								int newy = Board.this.posCheck.cy + (Board.this.posCheck.cy - oldcy);
+
+								if(isOccupe(newx, newy) == true){
+									System.out.println("Impossible de manger le pion, l'emplacement est occupe !"); 
 									isValid = false;
 									break;
 								}
-								else {
-									posChecks.remove(posChecker);
-									revalidate();
-									repaint();
-									isValid = true;
-									break;
-								}
+								
+								// Deplacement du pion
+								Board.this.posCheck.cx = newx;
+								Board.this.posCheck.cy = newy;
+								posChecks.remove(posChecker); // Suppression du pion mange
+								revalidate();
+								repaint();
+								isValid = true;
+								break;
 							}
-							else if (posCheck.checker.getType() == CheckerType.RED_REGULAR) {
-								if (Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR) {
-									System.out.println("Tu peux pas manger ton camp idiot ...");
-									isValid = false;
-									break;
-								}								
-								else {
-									posChecks.remove(posChecker);
-									revalidate();
-									repaint();
-									isValid = true;
-									break;
-								}
-							}
-							//isValid = false;
-							//break;
 						}
 						posChecker = posChecker + 1;
 					}
@@ -182,6 +178,25 @@ public class Board extends JComponent {
 				throw new AlreadyOccupiedException("L'emplacement (" + row + "," +
 						col + ") est occupe");
 		posChecks.add(posCheck);
+	}
+	
+	// Permet de savoir si l'emplacement est occupe
+	private boolean isOccupe(int posx, int posy){
+		
+		boolean isOccupe = false;
+		
+		for (PosCheck posCheck: posChecks)
+		{				
+			if (posCheck != Board.this.posCheck && 
+					posCheck.cx == posx &&
+					posCheck.cy == posy)
+			{
+				isOccupe = true;
+				break;
+			}
+		}
+			
+		return isOccupe;
 	}
 
 	@Override
