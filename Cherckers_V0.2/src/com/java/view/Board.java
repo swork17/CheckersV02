@@ -24,18 +24,22 @@ public class Board extends JComponent {
 	private Dimension dimPrefSize;
 	private boolean inDrag = false;
 	private int deltax, deltay;
-	private PosCheck posCheck;
 	private int oldcx, oldcy;
+	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
 
-	public Board() {
+	public Board(Checkers checkers) {
 		posChecks = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 
 		addMouseListener(new MouseAdapter()
-		{
+		{			
 			@Override
 			public void mousePressed(MouseEvent me) {
+				
+				if(checkers.myTurn == false)
+					return;
+				
 				int x = me.getX();
 				int y = me.getY();
 
@@ -90,8 +94,9 @@ public class Board extends JComponent {
 					if (column % 2 == 1)
 						isValid = false;
 				}
-
+				
 				int posChecker = 0;
+				boolean f_manger = false;
 				
 				if(isValid == true)
 					for (PosCheck posCheck: posChecks)
@@ -126,10 +131,13 @@ public class Board extends JComponent {
 									break;
 								}
 								
+								f_manger = true;
+								
 								// Deplacement du pion
 								Board.this.posCheck.cx = newx;
 								Board.this.posCheck.cy = newy;
 								posChecks.remove(posChecker); // Suppression du pion mange
+								set_score(checkers); // Actualise le score
 								revalidate();
 								repaint();
 								isValid = true;
@@ -138,6 +146,22 @@ public class Board extends JComponent {
 						}
 						posChecker = posChecker + 1;
 					}
+				
+				// Empeche de retourner en arriere si on ne mange pas un pion
+				if(f_manger == false && isValid == true) {
+					if(Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR
+							&& oldcy > Board.this.posCheck.cy) {
+						
+						System.out.println("Impossible de retourner en arrière !"); 
+						isValid = false;
+					}
+					
+					if(Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR
+							&& oldcy < Board.this.posCheck.cy) {
+						System.out.println("Impossible de retourner en arrière !"); 
+						isValid = false;
+					}
+				}
 
 				// Repositionnement si la position n'est pas valide
 				if(isValid == false)
@@ -203,6 +227,25 @@ public class Board extends JComponent {
 		}
 			
 		return isLibre;
+	}
+	
+	// Retourne le score 
+	private void set_score(Checkers checkers) {
+		int nbCheckhaut = 0;
+		int nbCheckbas = 0;
+		
+		for (PosCheck posCheck: posChecks)
+		{	
+			if(posCheck.checker.getType() == CheckerType.BLACK_REGULAR)
+			{
+				nbCheckhaut = nbCheckhaut + 1;
+			}
+			else {
+				nbCheckbas = nbCheckbas + 1;
+			}
+		}
+		
+		checkers.set_lbscore(nbCheckhaut, nbCheckbas);
 	}
 
 	@Override
