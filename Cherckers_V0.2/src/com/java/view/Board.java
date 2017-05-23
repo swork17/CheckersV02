@@ -20,6 +20,9 @@ import javax.swing.JOptionPane;
 
 public class Board extends JComponent {
 
+	public static int tour = 2;
+	public static boolean f_joueur1 = true;
+
 	private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
 	private final int BOARDDIM = 10 * SQUAREDIM;
 	private Dimension dimPrefSize;
@@ -28,7 +31,6 @@ public class Board extends JComponent {
 	private int oldcx, oldcy;
 	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
-	public static int tour = 2;
 
 	public Board(Checkers checkers) {
 		posChecks = new ArrayList<>();
@@ -38,9 +40,6 @@ public class Board extends JComponent {
 		{			
 			@Override
 			public void mousePressed(MouseEvent me) {
-				
-				if(checkers.myTurn == false)
-					return;
 				
 				int x = me.getX();
 				int y = me.getY();
@@ -100,17 +99,23 @@ public class Board extends JComponent {
 				int posChecker = 0;
 				boolean f_manger = false;
 				
-				if (Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR){
+				if (Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR2){
 					if (tour % 2 != 0) {
 						JOptionPane.showMessageDialog(null, "Ce n'est pas votre tour ...");
 						isValid = false;
 					}
 				}
-				else if (Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR){
+				else if (Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1){
 					if (tour % 2 == 0) {
 						JOptionPane.showMessageDialog(null, "Ce n'est pas votre tour ...");
 						isValid = false;
 					}
+				}
+				
+				if(	Board.this.posCheck.cx == oldcx && Board.this.posCheck.cy == oldcy)
+				{
+					isValid = false;
+					System.out.println("Le pion n'a pas bougé, pas de changement de joueur !"); 
 				}
 				
 				if(isValid == true) {
@@ -146,14 +151,12 @@ public class Board extends JComponent {
 									break;
 								}
 								
-								
 								f_manger = true;
 								
 								// Deplacement du pion
 								Board.this.posCheck.cx = newx;
 								Board.this.posCheck.cy = newy;
 								posChecks.remove(posChecker); // Suppression du pion mange
-								set_score(checkers); // Actualise le score
 								revalidate();
 								repaint();
 								isValid = true;
@@ -167,7 +170,7 @@ public class Board extends JComponent {
 				
 				// Empeche de retourner en arriere si on ne mange pas un pion
 				if(f_manger == false && isValid == true) {
-					if(Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR
+					if(Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1
 							&& oldcy > Board.this.posCheck.cy) {
 						
 						System.out.println("Impossible de retourner en arriï¿½re !"); 
@@ -175,21 +178,23 @@ public class Board extends JComponent {
 						isValid = false;
 					}
 					
-					if(Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR
+					if(Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR2
 							&& oldcy < Board.this.posCheck.cy) {
 						System.out.println("Impossible de retourner en arriï¿½re !");
 						JOptionPane.showMessageDialog(null, "Impossible de retourner en arriere");
 						isValid = false;
 					}
 				}
-
+				
 				// Repositionnement si la position n'est pas valide
 				if(isValid == false)
 				{
 					Board.this.posCheck.cx = oldcx;
 					Board.this.posCheck.cy = oldcy;
-				} else
+				} else {
 					tour++;
+					set_score(checkers); // Actualise le score
+				}
 
 				posCheck = null;
 				repaint();
@@ -257,13 +262,10 @@ public class Board extends JComponent {
 		
 		for (PosCheck posCheck: posChecks)
 		{	
-			if(posCheck.checker.getType() == CheckerType.BLACK_REGULAR)
-			{
+			if(posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1)
 				nbCheckhaut = nbCheckhaut + 1;
-			}
-			else {
+			else 
 				nbCheckbas = nbCheckbas + 1;
-			}
 		}
 		
 		checkers.set_lbscore(nbCheckhaut, nbCheckbas);
