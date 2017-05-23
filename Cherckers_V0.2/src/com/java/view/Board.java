@@ -45,8 +45,6 @@ public class Board extends JComponent {
 				int x = me.getX();
 				int y = me.getY();
 				
-					
-
 				for (PosCheck posCheck: posChecks)
 					if (Checker.contains(x, y, posCheck.cx, 
 							posCheck.cy))

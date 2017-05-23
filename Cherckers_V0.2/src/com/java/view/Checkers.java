@@ -104,6 +104,7 @@ public class Checkers extends JFrame
 	    	public void actionPerformed(ActionEvent e){
 			      init_board();
 			      init_score();
+			      Board.tour = 2;
 	    	}
 	    });
 
