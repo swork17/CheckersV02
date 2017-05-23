@@ -163,7 +163,6 @@ public class Board extends JComponent {
 						
 						posChecker = posChecker + 1;
 					}
-					tour++;
 				}
 				
 				// Empeche de retourner en arriere si on ne mange pas un pion
@@ -189,7 +188,8 @@ public class Board extends JComponent {
 				{
 					Board.this.posCheck.cx = oldcx;
 					Board.this.posCheck.cy = oldcy;
-				}
+				} else
+					tour++;
 
 				posCheck = null;
 				repaint();
