@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 
 @SuppressWarnings("serial")
 
@@ -27,6 +28,7 @@ public class Board extends JComponent {
 	private int oldcx, oldcy;
 	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
+	public static int tour = 2;
 
 	public Board(Checkers checkers) {
 		posChecks = new ArrayList<>();
@@ -42,6 +44,8 @@ public class Board extends JComponent {
 				
 				int x = me.getX();
 				int y = me.getY();
+				
+					
 
 				for (PosCheck posCheck: posChecks)
 					if (Checker.contains(x, y, posCheck.cx, 
@@ -98,7 +102,20 @@ public class Board extends JComponent {
 				int posChecker = 0;
 				boolean f_manger = false;
 				
-				if(isValid == true)
+				if (Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR){
+					if (tour % 2 != 0) {
+						JOptionPane.showMessageDialog(null, "Ce n'est pas votre tour ...");
+						isValid = false;
+					}
+				}
+				else if (Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR){
+					if (tour % 2 == 0) {
+						JOptionPane.showMessageDialog(null, "Ce n'est pas votre tour ...");
+						isValid = false;
+					}
+				}
+				
+				if(isValid == true) {
 					for (PosCheck posCheck: posChecks)
 					{				
 						if (line > (old_line+1) 
@@ -131,6 +148,7 @@ public class Board extends JComponent {
 									break;
 								}
 								
+								
 								f_manger = true;
 								
 								// Deplacement du pion
@@ -144,21 +162,26 @@ public class Board extends JComponent {
 								break;
 							}
 						}
+						
 						posChecker = posChecker + 1;
 					}
+					tour++;
+				}
 				
 				// Empeche de retourner en arriere si on ne mange pas un pion
 				if(f_manger == false && isValid == true) {
 					if(Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR
 							&& oldcy > Board.this.posCheck.cy) {
 						
-						System.out.println("Impossible de retourner en arrière !"); 
+						System.out.println("Impossible de retourner en arriï¿½re !"); 
+						JOptionPane.showMessageDialog(null, "Impossible de retourner en arriere");
 						isValid = false;
 					}
 					
 					if(Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR
 							&& oldcy < Board.this.posCheck.cy) {
-						System.out.println("Impossible de retourner en arrière !"); 
+						System.out.println("Impossible de retourner en arriï¿½re !");
+						JOptionPane.showMessageDialog(null, "Impossible de retourner en arriere");
 						isValid = false;
 					}
 				}
