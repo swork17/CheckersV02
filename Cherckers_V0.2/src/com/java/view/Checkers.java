@@ -19,12 +19,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.java.model.SocketManager;
+
 
 public class Checkers extends JFrame
 {
 	private Board board;
 	private JLabel lbscore;
-	protected JLabel lb_turn;
+	JButton bt_turn;
+	public boolean myTurn = true;
 	
    public Checkers(String title)
    {
@@ -37,7 +40,7 @@ public class Checkers extends JFrame
       init_menu();
       init_board();
       init_score();
-    	  
+      
       pack();
       setVisible(true);
 	  setLocationRelativeTo(null);
@@ -53,10 +56,10 @@ public class Checkers extends JFrame
     	  for (int j=1; j < 11; j++) {
     		  if(((i+j) % 2)==0) 
     			  if (i < 5) 
-    				  board.add(new Checker(CheckerType.CHECKER_JOUEUR1), i, j);
+    				  board.add(new Checker(CheckerType.BLACK_REGULAR), i, j);
     		  else 
     			  if (i > 6)
-    				  board.add(new Checker(CheckerType.CHECKER_JOUEUR2), i, j);
+    				  board.add(new Checker(CheckerType.RED_REGULAR), i, j);
     	  }
       }
       
@@ -101,9 +104,9 @@ public class Checkers extends JFrame
 		new_game.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		new_game.addActionListener(new ActionListener(){
 	    	public void actionPerformed(ActionEvent e){
-	    		init_board();
-				Board.tour = 2;
-				set_lbscore(20, 20);
+			      init_board();
+			      init_score();
+			      Board.tour = 2;
 	    	}
 	    });
 
@@ -114,6 +117,7 @@ public class Checkers extends JFrame
 		quit.addActionListener(new ActionListener(){
 			@Override
 	    	public void actionPerformed(ActionEvent e){
+				SocketManager.close_all();
 	    		System.exit(0);
 	    	}
 	    });
@@ -132,33 +136,45 @@ public class Checkers extends JFrame
 	private void init_score() {
 
 		JPanel score = new JPanel();
-		lb_turn = new JLabel("Ton tour");
+		bt_turn = new JButton();
 		lbscore = new JLabel("Score : 20 - 20");
+		bt_turn.setText("Terminer son tour");
+		bt_turn.setEnabled(true);
+		myTurn = true;
+		
+		bt_turn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				if(bt_turn.isEnabled()) {
+					bt_turn.setText("A votre adversaire");
+					bt_turn.setEnabled(false);
+					myTurn = false;
+				}
+				else {
+					bt_turn.setText("Terminer son tour");
+					bt_turn.setEnabled(true);
+					myTurn = true;
+				}
+			}
+		});
 		
 		score.setLayout(new BorderLayout());
 		score.add(lbscore, BorderLayout.WEST);
-		score.add(lb_turn, BorderLayout.EAST);
+		score.add(bt_turn, BorderLayout.EAST);
 		score.setBorder(BorderFactory.createLineBorder(Color.black));
 		add(score, BorderLayout.SOUTH);
 	}  
 	
 	public void set_lbscore(int nbCheckHaut, int nbCheckbas) {
 		String lb = "Score : " +  nbCheckHaut + " - " + nbCheckbas;
-		String w_turn = "Ton tour";
 		
-		if(  (Board.tour % 2 == 0 && Board.f_joueur1 == false)
-		   || Board.tour % 2 != 0 && Board.f_joueur1)
-			w_turn = "En attente de votre adversaire";
+		if(nbCheckHaut == 0 || nbCheckbas == 0) 
+		{
+			lb = "Fin de la partie";
+			bt_turn.setEnabled(false);
+			myTurn = false;
+		}
 		
-		if(    (Board.f_joueur1 && nbCheckHaut == 0)
-			|| (Board.f_joueur1 == false && nbCheckbas == 0))
-			w_turn = "Gagné";
-		
-		if(    (Board.f_joueur1 && nbCheckbas == 0)
-				|| (Board.f_joueur1 == false && nbCheckHaut == 0))
-				w_turn = "Perdu";
-				
-		lb_turn.setText(w_turn);
 		lbscore.setText(lb);
 	}
 }

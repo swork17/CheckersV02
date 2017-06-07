@@ -10,7 +10,7 @@ public final class Checker
    private CheckerType checkerType;
 
    public Checker(CheckerType checkerType)
-   {
+   { 
       this.checkerType = checkerType;
    }
 
@@ -19,7 +19,7 @@ public final class Checker
       int x = cx - DIMENSION / 2;
       int y = cy - DIMENSION / 2;
     
-      g.setColor(checkerType == CheckerType.CHECKER_JOUEUR1 ? Color.DARK_GRAY : 
+      g.setColor(checkerType == CheckerType.BLACK_REGULAR ? Color.DARK_GRAY : 
                  Color.PINK);
       
       g.fillRoundRect(x, y, DIMENSION, DIMENSION, 45, 45);
