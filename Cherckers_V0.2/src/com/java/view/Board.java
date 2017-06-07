@@ -31,7 +31,8 @@ public class Board extends JComponent {
 	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
 	public static int tour = 2;
-
+	public static boolean f_joueur1 = true;
+	
 	public Board(Checkers checkers) {
 		posChecks = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
@@ -102,17 +103,23 @@ public class Board extends JComponent {
 				int posChecker = 0;
 				boolean f_manger = false;
 				
-				if (Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR){
+				if (Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR2){
 					if (tour % 2 != 0) {
 						JOptionPane.showMessageDialog(null, "Ce n'est pas votre tour ...");
 						isValid = false;
 					}
 				}
-				else if (Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR){
+				else if (Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1){
 					if (tour % 2 == 0) {
 						JOptionPane.showMessageDialog(null, "Ce n'est pas votre tour ...");
 						isValid = false;
 					}
+				}
+				
+				if(	Board.this.posCheck.cx == oldcx && Board.this.posCheck.cy == oldcy)
+				{
+					isValid = false;
+					System.out.println("Le pion n'a pas bouge, pas de changement de joueur !"); 
 				}
 				
 				if(isValid == true) {
@@ -166,17 +173,15 @@ public class Board extends JComponent {
 				
 				// Empeche de retourner en arriere si on ne mange pas un pion
 				if(f_manger == false && isValid == true) {
-					if(Board.this.posCheck.checker.getType() == CheckerType.BLACK_REGULAR
+					if(Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1
 							&& oldcy > Board.this.posCheck.cy) {
 						
-						System.out.println("Impossible de retourner en arri�re !"); 
 						JOptionPane.showMessageDialog(null, "Impossible de retourner en arriere");
 						isValid = false;
 					}
 					
-					if(Board.this.posCheck.checker.getType() == CheckerType.RED_REGULAR
+					if(Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR2
 							&& oldcy < Board.this.posCheck.cy) {
-						System.out.println("Impossible de retourner en arri�re !");
 						JOptionPane.showMessageDialog(null, "Impossible de retourner en arriere");
 						isValid = false;
 					}
@@ -262,7 +267,7 @@ public class Board extends JComponent {
 		
 		for (PosCheck posCheck: posChecks)
 		{	
-			if(posCheck.checker.getType() == CheckerType.BLACK_REGULAR)
+			if(posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1)
 			{
 				nbCheckhaut = nbCheckhaut + 1;
 			}
