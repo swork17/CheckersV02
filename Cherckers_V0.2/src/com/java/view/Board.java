@@ -115,6 +115,13 @@ public class Board extends JComponent {
 						isValid = false;
 					}
 				}
+				SocketManager.send("4");
+				String tmp = SocketManager.wait_recv();
+				if (tmp != "2") {
+					JOptionPane.showMessageDialog(null, "Il n'y a pas deux joueur sur la room : " + tmp);
+					isValid = false;
+				}
+					
 				
 				if(	Board.this.posCheck.cx == oldcx && Board.this.posCheck.cy == oldcy)
 				{
