@@ -31,7 +31,6 @@ public class Board extends JComponent {
 	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
 	public static int tour = 2;
-	public static boolean f_joueur1 = true;
 	
 	public Board(Checkers checkers) {
 		posChecks = new ArrayList<>();

@@ -28,7 +28,7 @@ public class Checkers extends JFrame
 	private JLabel lbscore;
 	protected JLabel lb_turn;	
 	public boolean myTurn = true;
-	public int joueur_nb;
+	public static int joueur_nb;
 	
    public Checkers(int nb)
    {
@@ -43,6 +43,7 @@ public class Checkers extends JFrame
       init_board();
       init_score();
       
+      set_lbscore(20, 20);
       pack();
       setVisible(true);
 	  setLocationRelativeTo(null);
@@ -153,16 +154,16 @@ public class Checkers extends JFrame
 		String lb = "Score : " +  nbCheckHaut + " - " + nbCheckbas;
 		String w_turn = "Ton tour";
 		
-		if(  (Board.tour % 2 == 0 && Board.f_joueur1 == false)
-		   || Board.tour % 2 != 0 && Board.f_joueur1)
+		if(  (Board.tour % 2 == 0 && joueur_nb == 2)
+		   || Board.tour % 2 != 0 && joueur_nb == 1)
 			w_turn = "En attente de votre adversaire";
 		
-		if(    (Board.f_joueur1 && nbCheckHaut == 0)
-			|| (Board.f_joueur1 == false && nbCheckbas == 0))
+		if(    (joueur_nb == 1 && nbCheckHaut == 0)
+			|| (joueur_nb == 2 && nbCheckbas == 0))
 			w_turn = "Gagne";
 			
-		if(    (Board.f_joueur1 && nbCheckbas == 0)
-			|| (Board.f_joueur1 == false && nbCheckHaut == 0))
+		if(    (joueur_nb == 1 && nbCheckbas == 0)
+			|| (joueur_nb == 2 && nbCheckHaut == 0))
 			w_turn = "Perdu";
 					
 			lb_turn.setText(w_turn);

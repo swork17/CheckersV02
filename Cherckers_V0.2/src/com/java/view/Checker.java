@@ -23,7 +23,13 @@ public final class Checker
                  Color.PINK);
       
       g.fillRoundRect(x, y, DIMENSION, DIMENSION, 45, 45);
-      g.setColor(Color.WHITE);
+      
+      if( (Checkers.joueur_nb == 1 && checkerType == CheckerType.CHECKER_JOUEUR1)
+    	  || (Checkers.joueur_nb == 2 && checkerType == CheckerType.CHECKER_JOUEUR2))
+    	  g.setColor(Color.GRAY); // Pion de l'adversaire
+      else
+    	  g.setColor(Color.WHITE); // Pion du joueur 
+      
       g.drawRoundRect(x, y, DIMENSION, DIMENSION, 45, 45);
    }
    
