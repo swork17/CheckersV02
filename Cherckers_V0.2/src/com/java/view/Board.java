@@ -194,13 +194,12 @@ public class Board extends JComponent {
 					Board.this.posCheck.cy = oldcy;
 				} else {
 					tour++;
+					set_score(checkers); // Actualise le score
 					SocketManager.send("-OX:" + oldcx + "-OY:" + oldcy 
 							+ "-NX" + Board.this.posCheck.cx + "-NY:" + Board.this.posCheck.cy);
 				}
 					
-				
-
-				
+							
 				posCheck = null;
 				repaint();
 			}
@@ -267,8 +266,7 @@ public class Board extends JComponent {
 		
 		for (PosCheck posCheck: posChecks)
 		{	
-			if(posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1)
-			{
+			if(posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1) {
 				nbCheckhaut = nbCheckhaut + 1;
 			}
 			else {

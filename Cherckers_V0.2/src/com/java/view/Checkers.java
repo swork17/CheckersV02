@@ -28,10 +28,12 @@ public class Checkers extends JFrame
 	private JLabel lbscore;
 	protected JLabel lb_turn;	
 	public boolean myTurn = true;
+	public int joueur_nb;
 	
-   public Checkers(String title)
+   public Checkers(int nb)
    {
-      super(title);	 
+      super("Checkers joueur " + nb);	 
+      joueur_nb = nb;
       
       setIconImage(new ImageIcon("img/icone.png").getImage());
       setResizable(false);
