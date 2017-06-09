@@ -20,6 +20,8 @@ import com.java.model.SocketManager;
 
 @SuppressWarnings("serial")
 
+
+
 public class Board extends JComponent {
 
 	private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
@@ -31,6 +33,12 @@ public class Board extends JComponent {
 	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
 	public static int tour = 2;
+	
+	private class PosCheck {
+		public Checker checker;
+		public int cx;
+		public int cy;
+	}
 	
 	public Board(Checkers checkers) {
 		posChecks = new ArrayList<>();
@@ -306,11 +314,5 @@ public class Board extends JComponent {
 				g.setColor((g.getColor() == Color.LIGHT_GRAY) ? Color.WHITE : Color.LIGHT_GRAY);
 			}
 		}
-	}
-
-	private class PosCheck {
-		public Checker checker;
-		public int cx;
-		public int cy;
 	}
 }

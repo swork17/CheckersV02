@@ -10,8 +10,7 @@ public class SocketManager {
 
 	public static int init_Socket() {
 		try {
-		socket = new Socket("127.0.0.1", port);
-		//socket.setSoTimeout(50000);
+		socket = new Socket("37.59.36.109", port);
 		System.out.println("SOCKET = " + socket);
 
 		plec = new BufferedReader(

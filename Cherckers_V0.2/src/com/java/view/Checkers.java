@@ -111,6 +111,7 @@ public class Checkers extends JFrame
 			      init_score();
 			      Board.tour = 2;
 			      set_lbscore(20, 20);
+			      SocketManager.send("11");
 	    	}
 	    });
 
