@@ -12,11 +12,17 @@ public class main {
 	public static void main(String[] args) {
 		 if (SocketManager.init_Socket() == 0) {
 			 int nb = Integer.parseInt(SocketManager.wait_recv());
+			 
+			 if( (nb % 2) == 0) 
+				 nb = 2;
+			 else
+				 nb = 1;
+			 int joueur = nb;
 			 Runnable r = new Runnable() {
               @Override
               public void run() {
             	  
-            	  new Checkers(nb);
+            	  new Checkers(joueur);
               }
            };
            EventQueue.invokeLater(r);
