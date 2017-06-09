@@ -230,7 +230,7 @@ public class Board extends JComponent {
 		posCheck.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
 		for (PosCheck _posCheck: posChecks)
 			if (posCheck.cx == _posCheck.cx && posCheck.cy == _posCheck.cy)
-				throw new AlreadyOccupiedException("L'emplacement (" + row + "," +
+				System.out.println("L'emplacement (" + row + "," +
 						col + ") est occupe");
 		posChecks.add(posCheck);
 	}
