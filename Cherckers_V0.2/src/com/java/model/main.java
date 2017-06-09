@@ -22,7 +22,8 @@ public class main {
            EventQueue.invokeLater(r);
 		} 
 		else {
-			JOptionPane.showMessageDialog(null, "Erreur de connexion au serveur !", "Connexion impossible", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erreur de connexion au serveur !", 
+					"Connexion impossible", JOptionPane.ERROR_MESSAGE);
 			System.out.println("[SERVER]Connection error..");
 		}
 	}
