@@ -239,8 +239,17 @@ public class Board extends JComponent {
 					
 					posCheck = null;
 
-					
 					moveCheckersAdv(checkers);
+					/*
+					new Thread(new Runnable() {
+						public void run() {
+							SocketManager.send(Checkers.joueur_nb + "-OX:" + oldcx + "-OY:" + oldcy 
+								+ "-NX:" + Board.this.posCheck.cx + "-NY:" + Board.this.posCheck.cy);
+							moveCheckersAdv(checkers);
+
+						}
+					}).start();
+					*/
 				}
 					
 							
