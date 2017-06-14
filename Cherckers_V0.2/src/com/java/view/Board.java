@@ -7,20 +7,26 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
-
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
+import com.java.model.ParserRecv;
 import com.java.model.SocketManager;
 
 @SuppressWarnings("serial")
-
-
 
 public class Board extends JComponent {
 
@@ -28,6 +34,7 @@ public class Board extends JComponent {
 	private final int BOARDDIM = 10 * SQUAREDIM;
 	private Dimension dimPrefSize;
 	private boolean inDrag = false;
+	private boolean firstClick = true;
 	private int deltax, deltay;
 	private int oldcx, oldcy;
 	private PosCheck posCheck;
@@ -40,25 +47,45 @@ public class Board extends JComponent {
 		public int cy;
 	}
 	
-	public Board(Checkers checkers) {
+	public Board(Checkers checkers) 
+	{
 		posChecks = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
+		
 
 		addMouseListener(new MouseAdapter()
 		{			
 			@Override
 			public void mousePressed(MouseEvent me) {
 				
-				if(checkers.myTurn == false)
+				if(Checkers.joueur_nb == 2 && firstClick == true)
+				{
+					firstClick = false;
+					System.out.println("Premier tour du joueur 1, en attente ...");
+					moveCheckersAdv(checkers);
 					return;
+				}
+				
+				if(checkers.myTurn == false)
+				{
+					System.out.println("Ce n'est pas votre tour ...");
+					return;
+				}
 				
 				int x = me.getX();
 				int y = me.getY();
 				
 				for (PosCheck posCheck: posChecks)
-					if (Checker.contains(x, y, posCheck.cx, 
-							posCheck.cy))
+					if (Checker.contains(x, y, posCheck.cx, posCheck.cy))
 					{
+						// Pion de l'adversaire
+						if(  (Checkers.joueur_nb == 1 && posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR1)
+				    	  || (Checkers.joueur_nb == 2 && posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR2))
+						{
+							System.out.println("Ce ne sont pas vos pions !");
+							return;
+						}
+						
 						Board.this.posCheck = posCheck;
 						oldcx = posCheck.cx;
 						oldcy = posCheck.cy;
@@ -82,7 +109,6 @@ public class Board extends JComponent {
 						SQUAREDIM / 2;
 				posCheck.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + 
 						SQUAREDIM / 2;
-
 
 				// Verification de l'emplacement du pion 
 				boolean isValid = true;
@@ -122,8 +148,6 @@ public class Board extends JComponent {
 						isValid = false;
 					}
 				}
-
-
 				
 				if(	Board.this.posCheck.cx == oldcx && Board.this.posCheck.cy == oldcy)
 				{
@@ -153,7 +177,6 @@ public class Board extends JComponent {
 								break;
 							}
 							else{
-								
 								// Calcul de la nouvelle position du pion
 								int newx = Board.this.posCheck.cx + (Board.this.posCheck.cx - oldcx);
 								int newy = Board.this.posCheck.cy + (Board.this.posCheck.cy - oldcy);
@@ -190,7 +213,8 @@ public class Board extends JComponent {
 					}
 					
 					if(Board.this.posCheck.checker.getType() == CheckerType.CHECKER_JOUEUR2
-							&& oldcy < Board.this.posCheck.cy) {
+							&& oldcy < Board.this.posCheck.cy) 
+					{
 						JOptionPane.showMessageDialog(null, "Impossible de retourner en arriere");
 						isValid = false;
 					}
@@ -201,11 +225,22 @@ public class Board extends JComponent {
 				{
 					Board.this.posCheck.cx = oldcx;
 					Board.this.posCheck.cy = oldcy;
-				} else {
+				}
+				else 
+				{
 					tour++;
 					set_score(checkers); // Actualise le score
-					SocketManager.send("-OX:" + oldcx + "-OY:" + oldcy 
-							+ "-NX" + Board.this.posCheck.cx + "-NY:" + Board.this.posCheck.cy);
+					
+					revalidate();
+					repaint();
+					
+					SocketManager.send(Checkers.joueur_nb + "-OX:" + oldcx + "-OY:" + oldcy 
+							+ "-NX:" + Board.this.posCheck.cx + "-NY:" + Board.this.posCheck.cy);
+					
+					posCheck = null;
+
+					
+					moveCheckersAdv(checkers);
 				}
 					
 							
@@ -224,8 +259,8 @@ public class Board extends JComponent {
 				}
 			}
 		});
-
-	}
+		
+	} 
 
 	public void add(Checker checker, int row, int col) {
 		if (row < 1 || row > 10)
@@ -241,6 +276,50 @@ public class Board extends JComponent {
 				System.out.println("L'emplacement (" + row + "," +
 						col + ") est occupe");
 		posChecks.add(posCheck);
+	}
+	
+	// Effectue le déplacement de l'adversaire
+	public void moveCheckersAdv(Checkers checkers)
+	{
+		String msg = SocketManager.wait_recv();
+		ParserRecv parseur = new ParserRecv(msg);
+			
+		if(parseur.getRepnumjoueur() == Checkers.joueur_nb)
+		{
+			System.out.println("Attente du message de l'adversaire");
+			moveCheckersAdv(checkers);
+			return;
+		}
+		
+		System.out.println("parseur, getnumjoueur : " + parseur.getRepnumjoueur());
+		
+		for (PosCheck posCheck: posChecks)
+			// 			if (Checker.contains(parseur.getOldx(), parseur.getOldy(), posCheck.cx, posCheck.cy))
+			if (posCheck.cx == parseur.getOldx() && posCheck.cy == parseur.getOldy())
+			{
+				System.out.println("newx : " + parseur.getNewx());
+				System.out.println("posCheck.cx : " + posCheck.cx);
+				
+				
+				posCheck.cx = parseur.getNewx();
+				posCheck.cy = parseur.getNewy();
+				
+				System.out.println("oldx : " + parseur.getOldx() + " // newx : " + parseur.getNewx());
+				System.out.println("oldx : " + parseur.getOldy() + " // newy : " + parseur.getNewy());
+
+				tour++;
+				checkers.myTurn = true;
+				//posChecks.remove(posChecker); // Suppression du pion mange
+				set_score(checkers); // Actualise le score
+
+				revalidate();
+				repaint();
+				return;
+			}
+		
+		//tour++;
+	//	set_score(checkers); // Actualise le score
+			
 	}
 	
 	// Permet de savoir si l'emplacement est libre

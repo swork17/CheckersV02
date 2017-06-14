@@ -6,10 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -42,11 +43,12 @@ public class Checkers extends JFrame
       init_menu();
       init_board();
       init_score();
-      
+  
       set_lbscore(20, 20);
       pack();
       setVisible(true);
 	  setLocationRelativeTo(null);
+	 
    }
    
    private void init_board(){
@@ -65,9 +67,10 @@ public class Checkers extends JFrame
     				  board.add(new Checker(CheckerType.CHECKER_JOUEUR2), i, j);
     	  }
       }
-      
+
       add(board);
       pack();
+	
    }
    
 	private void init_menu() {
@@ -108,8 +111,8 @@ public class Checkers extends JFrame
 		new_game.addActionListener(new ActionListener(){
 	    	public void actionPerformed(ActionEvent e){
 			      init_board();
-			      init_score();
 			      Board.tour = 2;
+			      init_score();
 			      set_lbscore(20, 20);
 			      SocketManager.send("11");
 	    	}
@@ -154,10 +157,18 @@ public class Checkers extends JFrame
 	public void set_lbscore(int nbCheckHaut, int nbCheckbas) {
 		String lb = "Score : " +  nbCheckHaut + " - " + nbCheckbas;
 		String w_turn = "Ton tour";
+		myTurn = true;
+		
+		System.out.println(Board.tour % 2);
+		System.out.println(joueur_nb);
+
 		
 		if(  (Board.tour % 2 == 0 && joueur_nb == 2)
 		   || Board.tour % 2 != 0 && joueur_nb == 1)
+		{
+			myTurn = false;
 			w_turn = "En attente de votre adversaire";
+		}
 		
 		if(    (joueur_nb == 1 && nbCheckHaut == 0)
 			|| (joueur_nb == 2 && nbCheckbas == 0))
@@ -170,5 +181,7 @@ public class Checkers extends JFrame
 			lb_turn.setText(w_turn);
 		
 		lbscore.setText(lb);
+		repaint();
+		
 	}
 }
