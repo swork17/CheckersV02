@@ -25,7 +25,7 @@ import com.java.model.SocketManager;
 
 public class Checkers extends JFrame
 {
-	private Board board;
+	public static Board board;
 	private JLabel lbscore;
 	protected JLabel lb_turn;	
 	public boolean myTurn = true;
@@ -43,12 +43,13 @@ public class Checkers extends JFrame
       init_menu();
       init_board();
       init_score();
-  
       set_lbscore(20, 20);
       pack();
       setVisible(true);
 	  setLocationRelativeTo(null);
-	 
+	  
+	  // Lance le thread pour envoyer/récuperer les réponses du serveur
+	  new Thread(new SocketManager()).start();
    }
    
    private void init_board(){
@@ -158,11 +159,7 @@ public class Checkers extends JFrame
 		String lb = "Score : " +  nbCheckHaut + " - " + nbCheckbas;
 		String w_turn = "Ton tour";
 		myTurn = true;
-		
-		System.out.println(Board.tour % 2);
-		System.out.println(joueur_nb);
-
-		
+			
 		if(  (Board.tour % 2 == 0 && joueur_nb == 2)
 		   || Board.tour % 2 != 0 && joueur_nb == 1)
 		{

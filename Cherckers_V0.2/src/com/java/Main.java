@@ -10,7 +10,8 @@ import com.java.view.Checkers;
 public class Main {
 
 	public static void main(String[] args) {
-		 if (SocketManager.init_Socket() == 0) {
+		 if (SocketManager.init_Socket() == 0) 
+		 {
 			 int nb = Integer.parseInt(SocketManager.wait_recv());
 			 
 			 if( (nb % 2) == 0) 
@@ -18,13 +19,15 @@ public class Main {
 			 else
 				 nb = 1;
 			 int joueur = nb;
-			 Runnable r = new Runnable() {
-              @Override
-              public void run() {
+			 Runnable r = new Runnable() 
+			 {
+				 @Override
+				 public void run() {
             	  
-            	  new Checkers(joueur);
-              }
-           };
+					 new Checkers(joueur);
+				 }
+			 };
+
            EventQueue.invokeLater(r);
 		} 
 		else {

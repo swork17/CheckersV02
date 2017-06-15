@@ -34,12 +34,12 @@ public class Board extends JComponent {
 	private final int BOARDDIM = 10 * SQUAREDIM;
 	private Dimension dimPrefSize;
 	private boolean inDrag = false;
-	private boolean firstClick = true;
 	private int deltax, deltay;
 	private int oldcx, oldcy;
 	private PosCheck posCheck;
 	private List<PosCheck> posChecks;
 	public static int tour = 2;
+	public Checkers checkers;
 	
 	private class PosCheck {
 		public Checker checker;
@@ -47,8 +47,9 @@ public class Board extends JComponent {
 		public int cy;
 	}
 	
-	public Board(Checkers checkers) 
+	public Board(Checkers _checkers) 
 	{
+		checkers = _checkers;
 		posChecks = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 		
@@ -57,15 +58,7 @@ public class Board extends JComponent {
 		{			
 			@Override
 			public void mousePressed(MouseEvent me) {
-				
-				if(Checkers.joueur_nb == 2 && firstClick == true)
-				{
-					firstClick = false;
-					System.out.println("Premier tour du joueur 1, en attente ...");
-					moveCheckersAdv(checkers);
-					return;
-				}
-				
+								
 				if(checkers.myTurn == false)
 				{
 					System.out.println("Ce n'est pas votre tour ...");
@@ -192,7 +185,7 @@ public class Board extends JComponent {
 								Board.this.posCheck.cx = newx;
 								Board.this.posCheck.cy = newy;
 								posChecks.remove(posChecker); // Suppression du pion mange
-								set_score(checkers); // Actualise le score
+								set_score(); // Actualise le score
 								revalidate();
 								repaint();
 								isValid = true;
@@ -229,7 +222,7 @@ public class Board extends JComponent {
 				else 
 				{
 					tour++;
-					set_score(checkers); // Actualise le score
+					set_score(); // Actualise le score
 					
 					revalidate();
 					repaint();
@@ -239,17 +232,7 @@ public class Board extends JComponent {
 					
 					posCheck = null;
 
-					moveCheckersAdv(checkers);
-					/*
-					new Thread(new Runnable() {
-						public void run() {
-							SocketManager.send(Checkers.joueur_nb + "-OX:" + oldcx + "-OY:" + oldcy 
-								+ "-NX:" + Board.this.posCheck.cx + "-NY:" + Board.this.posCheck.cy);
-							moveCheckersAdv(checkers);
-
-						}
-					}).start();
-					*/
+					SocketManager.attenteAdv = true;
 				}
 					
 							
@@ -282,54 +265,69 @@ public class Board extends JComponent {
 		posCheck.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
 		for (PosCheck _posCheck: posChecks)
 			if (posCheck.cx == _posCheck.cx && posCheck.cy == _posCheck.cy)
-				System.out.println("L'emplacement (" + row + "," +
-						col + ") est occupe");
+				System.out.println("L'emplacement (" + row + "," + col + ") est occupe");
 		posChecks.add(posCheck);
 	}
 	
 	// Effectue le déplacement de l'adversaire
-	public void moveCheckersAdv(Checkers checkers)
+	public void moveCheckersAdv()
 	{
 		String msg = SocketManager.wait_recv();
 		ParserRecv parseur = new ParserRecv(msg);
-			
+		
+		// Ne dois pas prendre en compte son propre message
 		if(parseur.getRepnumjoueur() == Checkers.joueur_nb)
 		{
 			System.out.println("Attente du message de l'adversaire");
-			moveCheckersAdv(checkers);
+			moveCheckersAdv();
 			return;
 		}
 		
 		System.out.println("parseur, getnumjoueur : " + parseur.getRepnumjoueur());
 		
+		int eatx = 0; 
+		int eaty = 0;
+		
 		for (PosCheck posCheck: posChecks)
-			// 			if (Checker.contains(parseur.getOldx(), parseur.getOldy(), posCheck.cx, posCheck.cy))
 			if (posCheck.cx == parseur.getOldx() && posCheck.cy == parseur.getOldy())
-			{
-				System.out.println("newx : " + parseur.getNewx());
-				System.out.println("posCheck.cx : " + posCheck.cx);
-				
-				
+			{				
 				posCheck.cx = parseur.getNewx();
 				posCheck.cy = parseur.getNewy();
 				
-				System.out.println("oldx : " + parseur.getOldx() + " // newx : " + parseur.getNewx());
-				System.out.println("oldx : " + parseur.getOldy() + " // newy : " + parseur.getNewy());
+				
+				eatx = (parseur.getNewx() + parseur.getOldx()) / 2;
+				eaty = (parseur.getNewy() + parseur.getOldy()) / 2;
 
-				tour++;
-				checkers.myTurn = true;
-				//posChecks.remove(posChecker); // Suppression du pion mange
-				set_score(checkers); // Actualise le score
+				System.out.println("oldx : " + parseur.getOldx() + " // newx : " + parseur.getNewx() +" // eatx : " + eatx);
+				System.out.println("oldy : " + parseur.getOldy() + " // newy : " + parseur.getNewy() +" // eaty : " + eaty);
 
-				revalidate();
-				repaint();
-				return;
-			}
+				break;
+			}			
 		
-		//tour++;
-	//	set_score(checkers); // Actualise le score
-			
-	}
+		PosCheck eatCheck = null;
+		
+		// Vérifie si un pion doit être mangé et le récupère pour suppression
+		if(eatx != 0 && eaty != 0)
+			for (PosCheck posCheck: posChecks)
+				if (posCheck.cx == eatx && posCheck.cy == eaty)
+				{
+					eatCheck = posCheck;
+				}
+
+		// Suppression du pion mangé
+		if(eatCheck != null)
+			posChecks.remove(eatCheck); 
+
+		
+		tour++;
+		checkers.myTurn = true;
+		set_score(); // Actualise le score
+
+		revalidate();
+		repaint();
+		return;
+		
+	} // Fin moveCheckersAdv
 	
 	// Permet de savoir si l'emplacement est libre
 	private boolean posLibre(int posx, int posy){
@@ -357,7 +355,7 @@ public class Board extends JComponent {
 	}
 	
 	// Retourne le score 
-	private void set_score(Checkers checkers) {
+	private void set_score() {
 		int nbCheckhaut = 0;
 		int nbCheckbas = 0;
 		
